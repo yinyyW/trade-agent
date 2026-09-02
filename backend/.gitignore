@@ -1,0 +1,6 @@
+.env
+uv.lock
+.venv
+.agents
+__pycache__/
+.python-version
