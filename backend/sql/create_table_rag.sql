@@ -1,6 +1,6 @@
 
 
-CREATE TABLE knowledge_document (
+CREATE TABLE IF NOT EXIST knowledge_document (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
     category VARCHAR(50) NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE knowledge_document (
     INDEX idx_knowledge_document_status (status)
 );
 
-CREATE TABLE knowledge_chunk (
+CREATE TABLE IF NOT EXIST knowledge_chunk (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     document_id BIGINT NOT NULL,
     chunk_index INT NOT NULL,

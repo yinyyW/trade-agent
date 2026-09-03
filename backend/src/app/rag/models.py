@@ -11,6 +11,7 @@ class KnowledgeCategory(str, Enum):
     MARKET = "MARKET"
     TECHNICAL = "TECHNICAL"
     COMPLIANCE = "COMPLIANCE"
+    ANALYZE = "ANALYZE"
 
 
 @dataclass(slots=True)

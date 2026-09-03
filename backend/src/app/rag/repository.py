@@ -41,7 +41,7 @@ class KnowledgeChunkORM(Base):
     token_count: Mapped[int] = mapped_column(Integer)
     content_hash: Mapped[str] = mapped_column(String(64), index=True)
     vector_id: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    metadata: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    extra_metadata: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime)
     updated_at: Mapped[datetime] = mapped_column(DateTime)
 
@@ -83,7 +83,7 @@ class KnowledgeRepository:
         chunk_index: int,
         content: str,
         token_count: int,
-        metadata: dict[str, Any],
+        extra_metadata: dict[str, Any],
     ) -> int:
         now = datetime.utcnow()
         content_hash = hashlib.sha256(content.encode("utf-8")).hexdigest()
@@ -93,7 +93,7 @@ class KnowledgeRepository:
             content=content,
             token_count=token_count,
             content_hash=content_hash,
-            metadata=metadata,
+            extra_metadata=extra_metadata,
             created_at=now,
             updated_at=now,
         )

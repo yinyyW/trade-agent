@@ -44,15 +44,26 @@ class MarkdownIngestionPipeline:
 
         # 3. 切割后的文档转化为向量
         vectors = await self.embedding.embed_documents(chunks)
+        if not vectors:
+            raise ValueError("embedding result is empty")
+        if len(vectors) != len(chunks):
+            raise ValueError(
+                f"embedding count mismatch: "
+                f"chunks={len(chunks)}, vectors={len(vectors)}"
+            )
+
+        # 4. 确保 Milvus Collection 已创建
+        dimension = len(vectors[0])
+        await self.vector_store.ensure_collection(dimension=dimension)
 
         for index, (content, vector) in enumerate(zip(chunks, vectors)):
-            # 4. 保存切割后的文档至数据库
+            # 5. 保存切割后的文档至数据库
             chunk_id = await self.repo.create_chunk(
                 document_id=document_id,
                 chunk_index=index,
                 content=content,
                 token_count=len(content),
-                metadata={
+                extra_metadata={
                     **document.metadata,
                     "category": document.category.value,
                     "title": document.title,
@@ -60,7 +71,7 @@ class MarkdownIngestionPipeline:
                 },
             )
 
-            # 5. 保存向量
+            # 6. 保存向量
             await self.vector_store.upsert(
                 chunk_id=chunk_id,
                 document_id=document_id,

@@ -25,7 +25,14 @@ class RagSettings(BaseSettings):
     query_rewrite_enabled: bool = False
     deepseek_api_key: str | None = None
     deepseek_base_url: str = "https://api.deepseek.com"
-    deepseek_model: str = "deepseek-chat"
+    deepseek_model: str = "deepseek-v4-flash"
 
+class DatabaseSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+            env_file=".env",
+            extra="ignore",
+        )
+    database_url: str = ""
 
 settings = RagSettings()
+database_settings = DatabaseSettings()

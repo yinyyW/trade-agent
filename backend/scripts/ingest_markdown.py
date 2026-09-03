@@ -43,7 +43,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from app.rag.config import settings
+from app.rag.config import settings, database_settings
 from app.rag.embedding.sentence_transformer import SentenceTransformerEmbedding
 from app.rag.ingestion.pipeline import (
     MarkdownIngestionPipeline,
@@ -66,7 +66,7 @@ def create_session_factory():
         mysql+aiomysql://root:password@127.0.0.1:3306/ai_trading
     """
 
-    database_url = getattr(settings, "database_url", None)
+    database_url = getattr(database_settings, "database_url", None)
 
     if not database_url:
         raise RuntimeError(
@@ -99,13 +99,12 @@ def build_pipeline(session: AsyncSession) -> MarkdownIngestionPipeline:
 
     vector_store = MilvusVectorStore(
         uri=settings.milvus_uri,
-        collection_name=settings.milvus_collection,
-        dim=settings.embedding_dim,
+        collection_name=settings.milvus_collection
     )
 
     splitter = SemanticTextSplitter(
         chunk_size=settings.chunk_size,
-        chunk_overlap=settings.chunk_overlap,
+        overlap=settings.chunk_overlap,
     )
 
     return MarkdownIngestionPipeline(
