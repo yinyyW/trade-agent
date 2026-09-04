@@ -1,6 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
 class RagSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_prefix="RAG_",
@@ -29,10 +28,20 @@ class RagSettings(BaseSettings):
 
 class DatabaseSettings(BaseSettings):
     model_config = SettingsConfigDict(
-            env_file=".env",
-            extra="ignore",
-        )
+        env_file=".env",
+        extra="ignore",
+    )
     database_url: str = ""
 
-rag_settings = RagSettings()
+class LLMSettings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        extra="ignore",
+    )
+    deepseek_api_key: str | None = None
+    deepseek_base_url: str = "https://api.deepseek.com"
+    deepseek_model: str = "deepseek-v4-flash"
+
+settings = RagSettings()
 database_settings = DatabaseSettings()
+llm_settings = LLMSettings()

@@ -43,7 +43,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from app.rag.config import settings, database_settings
+from app.rag.config import rag_settings, database_settings
 from app.rag.embedding.sentence_transformer import SentenceTransformerEmbedding
 from app.rag.ingestion.pipeline import (
     MarkdownIngestionPipeline,
@@ -94,17 +94,17 @@ def build_pipeline(session: AsyncSession) -> MarkdownIngestionPipeline:
     """
 
     embedding = SentenceTransformerEmbedding(
-        model_name=settings.embedding_model,
+        model_name=rag_settings.embedding_model,
     )
 
     vector_store = MilvusVectorStore(
-        uri=settings.milvus_uri,
-        collection_name=settings.milvus_collection
+        uri=rag_settings.milvus_uri,
+        collection_name=rag_settings.milvus_collection
     )
 
     splitter = SemanticTextSplitter(
-        chunk_size=settings.chunk_size,
-        overlap=settings.chunk_overlap,
+        chunk_size=rag_settings.chunk_size,
+        overlap=rag_settings.chunk_overlap,
     )
 
     return MarkdownIngestionPipeline(
