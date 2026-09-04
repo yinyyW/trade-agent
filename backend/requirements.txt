@@ -5,3 +5,4 @@ pydantic-settings
 pymilvus
 sentence-transformers
 openai
+redis

@@ -1,5 +1,5 @@
 [project]
-name = "backend"
+name = "app"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
@@ -9,6 +9,11 @@ authors = [
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.141.1",
+    "langchain>=1.4.0",
+    "langchain-mcp-adapters>=0.3.2",
+    "langchain-openai>=1.6.0",
+    "langgraph>=1.2.11",
+    "mcp>=1.29.1",
     "uvicorn>=0.52.4",
 ]
 
