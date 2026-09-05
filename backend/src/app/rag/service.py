@@ -76,7 +76,7 @@ class RagService:
                     category=document.category,
                     vector_score=hit.score,
                     metadata={
-                        **(chunk.metadata or {}),
+                        **(chunk.extra_metadata or {}),
                         "source_type": document.source_type,
                         "source_url": document.source_url,
                         "version": document.version,
