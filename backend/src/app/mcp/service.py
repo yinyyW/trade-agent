@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Awaitable, Callable, Iterable
+from typing import Any, Awaitable, Iterable
 
 from .registry import (
     MCPToolDefinition,
@@ -360,8 +360,6 @@ class MCPService:
             tool_name,
             arguments,
         )
-
-        print(f"self call result: ${result}")
 
         if not result.success:
             raise MCPToolExecutionError(

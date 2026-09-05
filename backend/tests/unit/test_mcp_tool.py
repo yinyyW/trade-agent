@@ -1,13 +1,13 @@
 import asyncio
 
+from app.mcp.client import THSMCPClient
 from app.mcp.manager import MCPManager
+from app.mcp.registry import MCPToolRegistry
 
 
 async def test_query_tools():
-
-    manager = MCPManager()
-
-    tools = await manager.get_tools()
+    client = THSMCPClient()
+    tools = await client.get_tools()
 
     print("\n=== MCP Tools ===")
 
@@ -15,15 +15,18 @@ async def test_query_tools():
         print(f"\nName: {tool.name}")
         print(f"Description: {tool.description}")
 
+
+
 async def test_invoke_tool():
 
-    manager = MCPManager()
+    client = THSMCPClient()
+    registry = MCPToolRegistry()
+    tools = await client.get_tools()
+    manager = MCPManager(tools=tools, registry=registry)
 
-    tool = await manager.get_tool(
+    tool = manager.get_tool(
         "index_highfreq_quotes"
     )
-    print(tool.args_schema)
-
     if tool is None:
         raise RuntimeError("MCP tool not found")
 
@@ -35,7 +38,7 @@ async def test_invoke_tool():
         }
     )
 
-    print(result)
+    print(f"ai工具调用结果：{result}")
 
 if __name__ == "__main__":
     asyncio.run(test_invoke_tool())

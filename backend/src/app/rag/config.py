@@ -1,10 +1,12 @@
+from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class RagSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_prefix="RAG_",
-        env_file=".env",
+        env_file=Path(__file__).resolve().parents[3] / ".env",
         extra="ignore",
     )
 
@@ -29,7 +31,7 @@ class RagSettings(BaseSettings):
 
 class DatabaseSettings(BaseSettings):
     model_config = SettingsConfigDict(
-            env_file=".env",
+            env_file=Path(__file__).resolve().parents[3] / ".env",
             extra="ignore",
         )
     database_url: str = ""
