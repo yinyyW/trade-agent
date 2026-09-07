@@ -56,7 +56,7 @@ class RAGNode:
                     "document_id": item.document_id,
                     "title": item.title,
                     "content": item.content,
-                    "score": item.score,
+                    "score": item.rerank_score,
                     "category": item.category,
                     "metadata": item.metadata,
                 }

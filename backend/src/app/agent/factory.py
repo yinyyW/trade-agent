@@ -9,7 +9,7 @@ from app.agent.nodes.rag import RAGNode
 from app.agent.router import route_after_llm
 from app.agent.state import AgentState
 from app.mcp.manager import MCPManager
-from app.rag.service import RAGService
+from app.rag.service import RagService
 
 
 class AgentFactory:
@@ -18,7 +18,7 @@ class AgentFactory:
         self,
         *,
         llm: ChatOpenAI,
-        rag_service: RAGService,
+        rag_service: RagService,
         mcp_manager: MCPManager,
     ):
         self.llm = llm
