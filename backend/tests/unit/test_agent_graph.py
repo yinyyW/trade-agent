@@ -66,7 +66,7 @@ async def test_llm():
     rag_service = None
     try:
         async with session_factory() as session:
-            rag_service = create_rag_service(session=session)
+            rag_service = create_rag_service(session_factory=session_factory)
             # 创建模型和工具
             client = THSMCPClient()
             registry = MCPToolRegistry()

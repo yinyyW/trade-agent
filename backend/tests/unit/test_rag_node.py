@@ -36,10 +36,9 @@ async def test_rag_service():
     query = "PPI 是什么？"
 
     try:
-        async with session_factory() as session:
-            rag_service = create_rag_service(session=session)
-            result = await rag_service.retrieve(query=query, category=KnowledgeCategory.MACRO, top_k=3)
-            print(f"result = {result}")
+        rag_service = create_rag_service(session_factory=session_factory)
+        result = await rag_service.retrieve(query=query, category=KnowledgeCategory.MACRO, top_k=3)
+        print(f"result = {result}")
     finally:
             await engine.dispose()
 

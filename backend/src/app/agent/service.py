@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 from typing import Any
 
-from app.agent.event_adapter import SSEEventAdapter
+from app.agent.streaming.event_adapter import SSEEventAdapter
 from app.agent.factory import AgentFactory
 
 

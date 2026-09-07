@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from .config import rag_settings
 from .context_builder import ContextBuilder
@@ -10,12 +10,13 @@ from .query_rewriter import (
     IdentityQueryRewriter,
 )
 from .reranker import CrossEncoderReranker, NoopReranker
-from .repository import KnowledgeRepository
 from .service import RagService
 from .vector_store.milvus import MilvusVectorStore
 
 
-def create_rag_service(session: AsyncSession) -> RagService:
+def create_rag_service(
+    session_factory: async_sessionmaker[AsyncSession],
+) -> RagService:
     embedding = SentenceTransformerEmbedding(rag_settings.embedding_model)
 
     vector_store = MilvusVectorStore(
@@ -42,7 +43,7 @@ def create_rag_service(session: AsyncSession) -> RagService:
         query_rewriter = IdentityQueryRewriter()
 
     return RagService(
-        repository=KnowledgeRepository(session),
+        session_factory=session_factory,
         vector_store=vector_store,
         embedding=embedding,
         reranker=reranker,
