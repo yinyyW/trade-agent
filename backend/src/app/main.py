@@ -10,7 +10,6 @@ from app.home.router import router as home_router
 
 logger = logging.getLogger(__name__)
 
-
 app = FastAPI(
     title="Trade Agent",
     description="金融智能投研 Agent 后端服务",

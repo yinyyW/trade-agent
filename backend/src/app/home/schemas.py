@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Any
 
 from pydantic import BaseModel, Field
+from decimal import Decimal
 
 
 class IndexQuote(BaseModel):
@@ -52,4 +53,35 @@ class HomeDashboardData(BaseModel):
 class HomeDashboardResponse(BaseModel):
     code: int = 0
     message: str = "success"
-    data: HomeDashboardData
+    data: HomeDashboardData | HomeDashboardVO
+
+class IndexQuoteVO(BaseModel):
+    code: str
+    name: str
+    price: Decimal
+    change: Decimal
+    change_percent: Decimal
+    update_time: datetime | None = None
+
+
+class MarketOverviewVO(BaseModel):
+    indices: list[IndexQuoteVO]
+
+
+class HotNewsVO(BaseModel):
+    title: str
+    summary: str | None = None
+    source: str | None = None
+    publish_time: datetime | None = None
+    url: str | None = None
+
+
+class HotSectorVO(BaseModel):
+    code: str
+    name: str
+
+class HomeDashboardVO(BaseModel):
+    update_time: datetime
+    market: MarketOverviewVO
+    news: list[HotNewsVO]
+    sectors: list[HotSectorVO]

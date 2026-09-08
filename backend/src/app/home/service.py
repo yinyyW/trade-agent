@@ -5,14 +5,18 @@ import logging
 from datetime import datetime, timezone
 from typing import Any
 
+from app.home.providers.base import MarketProvider, SectorProvider, NewsProvider
 from app.mcp.manager import MCPManager
 from .config import HOME_MACRO_METRICS
 from .schemas import (
     HomeDashboardData,
+    HomeDashboardVO,
+    HotSectorVO,
     IndexQuote,
     MacroIndicator,
     MarketBreadth,
     MarketOverview,
+    MarketOverviewVO,
 )
 
 logger = logging.getLogger(__name__)
@@ -20,10 +24,13 @@ logger = logging.getLogger(__name__)
 
 class HomeService:
 
-    def __init__(self, mcp_manager: MCPManager):
+    def __init__(self, mcp_manager: MCPManager, market_provider: MarketProvider, sector_provider: SectorProvider, news_provider: NewsProvider):
         self.mcp_manager = mcp_manager
+        self.market_provider = market_provider
+        self.sector_provider = sector_provider
+        self.news_provider = news_provider
 
-    async def get_dashboard(self) -> HomeDashboardData:
+    async def get_dashboard(self) -> HomeDashboardVO:
         """
         获取首页宏观数据看板。
 
@@ -32,39 +39,19 @@ class HomeService:
         - 宏观经济数据：get_edb_data
         """
 
-        market_task = asyncio.create_task(
-            self._get_market_overview()
-        )
+        market = await self.market_provider.get_indices()
 
-        macro_task = asyncio.create_task(
-            self._get_macro_data()
-        )
+        sectors = await self.sector_provider.get_hot_sectors()
 
-        market, macro = await asyncio.gather(
-            market_task,
-            macro_task,
-            return_exceptions=True,
-        )
+        news = await self.news_provider.get_hot_news()
 
-        # MCP 某个工具失败不应该导致整个首页失败
-        if isinstance(market, Exception):
-            logger.exception(
-                "Failed to load market dashboard",
-                exc_info=market,
-            )
-            market = MarketOverview()
-
-        if isinstance(macro, Exception):
-            logger.exception(
-                "Failed to load macro dashboard",
-                exc_info=macro,
-            )
-            macro = []
-
-        return HomeDashboardData(
-            market=market,
-            macro=macro,
-            updated_at=datetime.now(timezone.utc),
+        return HomeDashboardVO(
+            update_time=datetime.now(timezone.utc),
+            market=MarketOverviewVO(
+                indices=market,
+            ),
+            sectors=sectors,
+            news=news
         )
 
     # =========================================================
