@@ -1,0 +1,11 @@
+.ant-pro-top-nav-header-main-left {
+  margin-right: 10px;
+}
+
+.ant-menu-dark.ant-menu-horizontal > .ant-menu-item-selected {
+  background-color: #11242f;
+}
+
+.ant-menu-dark.ant-menu-horizontal > .ant-menu-item-selected:hover {
+  background-color: #11242f;
+}
