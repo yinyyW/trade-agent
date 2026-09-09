@@ -39,6 +39,13 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
+## 首页开发说明
+
+- 首页入口：`src/pages/home/HomePage.tsx`
+- 数据接口：`GET /api/home/dashboard`，请求封装在 `src/api/home.ts`
+- 接口基地址默认 `/api`，本地开发已通过 `package.json` 的 `proxy` 转发到 `http://localhost:8000`；如后端地址不同，可设置环境变量 `REACT_APP_API_BASE_URL`
+- 页面模块：市场速览（上证指数 / 深证成指 / 创业板指）、热点资讯（当日 / 近 3 日）、热门行业 TOP10；宏观环境模块按需求暂不展示
+
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
