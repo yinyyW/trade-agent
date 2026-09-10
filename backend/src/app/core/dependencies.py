@@ -3,6 +3,8 @@
 from functools import lru_cache
 
 from app.home.service import HomeService
+from app.market.repository.akshare_market import AkshareMarketRepository
+from app.market.service import IndicatorService, MarketService
 from fastapi import Request
 
 from app.runtime.runtime import ApplicationRuntime
@@ -21,4 +23,16 @@ def get_home_service(request: Request) -> HomeService:
         sector_provider=AkShareSectorProvider(),
         news_provider=AkShareNewsProvider(),
         mcp_manager=agent.mcp_manager
+    )
+
+@lru_cache
+def get_market_service() -> MarketService:
+
+    repository = AkshareMarketRepository()
+
+    indicator_service = IndicatorService()
+
+    return MarketService(
+        repository=repository,
+        indicator_service=indicator_service,
     )
