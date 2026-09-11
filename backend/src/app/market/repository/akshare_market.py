@@ -32,7 +32,6 @@ class AkshareMarketRepository(MarketRepository):
             start=start_date,
             end=end_date,
         )
-        print(f"akshare market df: {df}")
 
         if df.empty:
             return []
@@ -47,8 +46,6 @@ class AkshareMarketRepository(MarketRepository):
         start: str | None,
         end: str | None,
     ) -> pd.DataFrame:
-        print(f"param: {symbol}, {start}, {end}, {adjust}")
-        # return ak.stock_zh_a_daily(symbol="sh600519", start_date="20260901", end_date="20260909", adjust="qfq")
         return ak.stock_zh_a_daily(
             symbol=symbol,
             start_date=start,

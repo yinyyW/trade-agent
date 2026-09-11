@@ -82,7 +82,7 @@ class MarketKlineMeta(BaseModel):
     price_scale: int = 2
 
 
-class MarketKlineResponse(BaseModel):
+class MarketKlineData(BaseModel):
     symbol: str
 
     name: str | None = None
@@ -100,3 +100,8 @@ class MarketKlineResponse(BaseModel):
     indicators: list[IndicatorResponse]
 
     meta: MarketKlineMeta
+
+class MarketKlineResponse(BaseModel):
+    code: int = 0
+    message: str = "success"
+    data: MarketKlineData

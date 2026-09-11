@@ -2,6 +2,7 @@ from app.core.dependencies import get_market_service
 from fastapi import APIRouter, Depends, HTTPException
 
 from .schemas import (
+    MarketKlineData,
     MarketKlineRequest,
     MarketKlineResponse,
     CandleResponse,
@@ -25,7 +26,6 @@ async def get_kline(
     service: MarketService = Depends(get_market_service),
 ):
     try:
-        print(f"symbol = {request.symbol}")
         candles, indicators = await service.get_kline(
             symbol=request.symbol,
             period=request.period,
@@ -40,8 +40,7 @@ async def get_kline(
             status_code=400,
             detail=str(e),
         )
-
-    return MarketKlineResponse(
+    market_kline_data = MarketKlineData(
         symbol=request.symbol,
 
         period=request.period,
@@ -83,3 +82,9 @@ async def get_kline(
 
         meta=MarketKlineMeta(),
     )
+    
+    return MarketKlineResponse(
+            code=0,
+            message="success",
+            data=market_kline_data,
+        )
