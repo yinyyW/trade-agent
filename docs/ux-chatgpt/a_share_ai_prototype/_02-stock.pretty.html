@@ -1,0 +1,234 @@
+</style>
+</head>
+<body>
+<header class="topbar">
+<div class="brand">
+<div class="mark">
+</div>A股 AI</div>
+<nav class="nav">
+<a href="01-market.html">市场复盘</a>
+<a class="active" href="#">个股分析</a>
+<a href="03-ai-watchlist.html">AI问答</a>
+<a href="03-ai-watchlist.html#watch">自选股</a>
+</nav>
+<div class="right">
+<div class="avatar">AI</div>
+</div>
+</header>
+<main class="wrap">
+<section class="ticker">
+<div class="ticker-top">
+<div>
+<div class="stock-name">贵州茅台 <span class="code">600519.SH</span>
+</div>
+<div class="price-row">
+<span class="price">1452.80</span>
+<span class="chg">+18.32 +1.28%</span>
+</div>
+</div>
+<div class="ticker-actions">
+<button class="btn" onclick="toggleWatch(this)">☆ 加自选</button>
+<button class="btn primary" onclick="alert('已进入 AI 问答，上下文：贵州茅台 600519')">✦ 问 AI</button>
+</div>
+</div>
+<div class="stats">
+<div class="s">
+<span>今开</span>
+<b>1435.00</b>
+</div>
+<div class="s">
+<span>最高</span>
+<b>1468.20</b>
+</div>
+<div class="s">
+<span>最低</span>
+<b>1428.30</b>
+</div>
+<div class="s">
+<span>换手率</span>
+<b>0.82%</b>
+</div>
+</div>
+</section>
+<div class="layout">
+<section class="panel">
+<div class="tabs">
+<button class="tab active" onclick="showTab('trend',this)">走势分析</button>
+<button class="tab" onclick="showTab('finance',this)">财报解读</button>
+<button class="tab" onclick="showTab('score',this)">综合评价</button>
+</div>
+<div id="trend" class="section">
+<div class="chart">
+<div class="grid">
+</div>
+<div class="labels">
+<span>日线</span>
+<span>MA5</span>
+<span>MA10</span>
+<span>MA20</span>
+</div>
+<div class="kline">
+</div>
+<div class="line">
+</div>
+<div class="line2">
+</div>
+<div class="legend">
+<span class="lg1">价格</span>
+<span class="lg2">MA5</span>
+<span class="lg3">MA10</span>
+</div>
+</div>
+<div class="ai-box">
+<div class="ai-head">✦ AI 技术面解读 <span class="small">基于行情工具 + 技术指标知识库</span>
+</div>
+<div class="ai-bullets">
+<div>
+<div class="small">趋势判断</div>
+<div class="big">价格位于短期均线上方</div>
+</div>
+<div>
+<div class="small">量价关系</div>
+<div class="big">成交量较近 5 日均值放大</div>
+</div>
+<div>
+<div class="small">支撑 / 压力参考</div>
+<div class="big">近期高低点附近存在观察区</div>
+</div>
+</div>
+</div>
+</div>
+<div id="finance" class="section hidden">
+<div class="finance">
+<div class="fin">
+<span>营业收入</span>
+<strong>128.4亿</strong>
+<span class="up">同比 +18.2%</span>
+</div>
+<div class="fin">
+<span>净利润</span>
+<strong>62.1亿</strong>
+<span class="up">同比 +15.1%</span>
+</div>
+<div class="fin">
+<span>扣非净利润</span>
+<strong>60.8亿</strong>
+<span class="up">同比 +14.8%</span>
+</div>
+<div class="fin">
+<span>毛利率</span>
+<strong>91.4%</strong>
+<span class="up">同比 +0.4%</span>
+</div>
+<div class="fin">
+<span>负债率</span>
+<strong>31.8%</strong>
+<span class="down">同比 -1.1%</span>
+</div>
+<div class="fin">
+<span>经营现金流</span>
+<strong>72.3亿</strong>
+<span class="up">同比 +21.2%</span>
+</div>
+</div>
+<div class="highlight">
+<div class="item good">
+<b>✓ 核心亮点</b>
+<br>营收保持同比增长，经营现金流增速高于营收增速。</div>
+<div class="item good">
+<b>✓ 核心亮点</b>
+<br>毛利率整体稳定，盈利结构未出现明显恶化。</div>
+<div class="item warn">
+<b>⚠ 潜在风险</b>
+<br>部分费用项目增速高于收入增速，需要持续跟踪。</div>
+</div>
+</div>
+<div id="score" class="section hidden">
+<div class="score-grid">
+<div class="score-card">
+<div class="stars">★★★★☆</div>
+<div class="score-num">4.2</div>
+<div class="small">AI 综合数据评分</div>
+</div>
+<div>
+<div class="dimension">
+<span>基本面</span>
+<div class="dimbar">
+<i style="width:90%">
+</i>
+</div>
+<b>4.5</b>
+</div>
+<div class="dimension">
+<span>技术面</span>
+<div class="dimbar">
+<i style="width:78%">
+</i>
+</div>
+<b>3.9</b>
+</div>
+<div class="dimension">
+<span>板块热度</span>
+<div class="dimbar">
+<i style="width:82%">
+</i>
+</div>
+<b>4.1</b>
+</div>
+</div>
+</div>
+<div class="highlight">
+<div class="item good">
+<b>客观优势总结</b>
+<br>盈利能力较稳定、经营现金流表现较好、所属板块近期活跃度较高。</div>
+<div class="item warn">
+<b>潜在隐患总结</b>
+<br>部分财务指标存在变化，需要结合历史区间和后续披露进一步观察。</div>
+</div>
+</div>
+</section>
+<aside class="panel side">
+<div class="side-head">
+<div class="summary-title">✦ AI 当前标的摘要</div>
+<span class="small">MCP 已锁定</span>
+</div>
+<div class="small" style="margin-top:4px">贵州茅台 · 600519.SH</div>
+<div class="ai-score">
+<div>
+<span class="small">基本面</span>
+<div class="bar">
+<i style="width:90%">
+</i>
+</div>
+</div>
+<div>
+<span class="small">技术面</span>
+<div class="bar">
+<i style="width:78%">
+</i>
+</div>
+</div>
+<div>
+<span class="small">板块热度</span>
+<div class="bar">
+<i style="width:82%">
+</i>
+</div>
+</div>
+<div class="risk">
+<b>● 暂未发现明显风险</b>
+<div class="small" style="margin-top:4px">风险扫描时间：15:31</div>
+</div>
+</div>
+<button class="btn primary side-btn" onclick="alert('进入 AI 问答：已自动携带贵州茅台上下文')">继续向 AI 提问 →</button>
+<div class="item" style="margin-top:14px">
+<span class="small">数据来源</span>
+<br>行情 / 财报 / 资讯聚合 / RAG 知识库</div>
+</aside>
+</div>
+</main>
+<div class="footer">股市有风险，投资需谨慎。本工具仅提供数据客观解读，不构成任何投资建议。</div>
+<script>function showTab(id,el){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));el.classList.add('active');['trend','finance','score'].forEach(k=>document.getElementById(k).classList.toggle('hidden',k!==id))}function toggleWatch(btn){btn.textContent=btn.textContent.includes('加')?'★ 已自选':'☆ 加自选'}</script>
+</body>
+</html>
+

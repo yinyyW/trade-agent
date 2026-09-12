@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import LayoutContainer from "./components/common/LayoutContainer";
 import HomePage from "./pages/home/HomePage";
 import PlaceholderPage from "./pages/PlaceholderPage";
@@ -9,7 +9,8 @@ function App() {
     <Routes>
       <Route path="/" element={<LayoutContainer />}>
         <Route index element={<HomePage />} />
-        <Route path="/stock" element={<StockPage />} />
+        <Route path="/stock" element={<Navigate to="/stock/sh600519" replace />} />
+        <Route path="/stock/:symbol" element={<StockPage />} />
         <Route path="/qa" element={<PlaceholderPage title="AI问答" />} />
         <Route
           path="/watch-list"

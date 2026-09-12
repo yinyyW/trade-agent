@@ -1,0 +1,277 @@
+.stock-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.stock-ticker {
+  background: linear-gradient(180deg, #111d28, #0c171f);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 20px 22px;
+  box-shadow: var(--shadow);
+}
+
+.stock-ticker-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.stock-name {
+  font-size: 27px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.stock-code {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.stock-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 15px;
+  margin-top: 8px;
+}
+
+.stock-price {
+  font-size: 38px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.stock-change {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.stock-actions {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.stock-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.stock-stat {
+  background: #0a151e;
+  border: 1px solid #1b2e3b;
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+
+.stock-stat span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.stock-stat b {
+  font-size: 16px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.stock-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 315px;
+  gap: 18px;
+  align-items: start;
+}
+
+.stock-main {
+  overflow: hidden;
+}
+
+.stock-tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid var(--line);
+  padding: 8px;
+}
+
+.stock-tab {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.stock-tab:hover {
+  color: var(--text);
+}
+
+.stock-tab.active {
+  background: #15323b;
+  color: #d8fffc;
+}
+
+.stock-tab-content {
+  padding: 18px;
+}
+
+.stock-chart-box {
+  background: linear-gradient(#0a151e, #09131b);
+  border: 1px solid #1b2f3c;
+  border-radius: 13px;
+  overflow: hidden;
+}
+
+.kline-chart {
+  position: relative;
+}
+
+.kline-chart-canvas {
+  width: 100%;
+}
+
+.kline-chart-legend {
+  position: absolute;
+  top: 10px;
+  left: 14px;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.kline-legend-period {
+  color: #c8d6de;
+}
+
+.kline-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.kline-legend-swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.kline-legend-name {
+  color: #9fb0bc;
+}
+
+.kline-legend-value {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ai-box {
+  margin-top: 14px;
+  background: #0b1b21;
+  border: 1px solid #22535a;
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.ai-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #91ebe5;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.ai-sub {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.stock-aside {
+  padding: 16px;
+}
+
+.stock-aside-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.stock-aside-title {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.stock-aside-lock {
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.stock-aside-symbol {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.stock-aside-score {
+  margin-top: 14px;
+  background: #0b1a22;
+  border: 1px solid #23404b;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.stock-aside-source {
+  margin-top: 14px;
+  padding: 13px 14px;
+  border-radius: 10px;
+  background: #0b161e;
+  border: 1px solid #1e303b;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.stock-aside-source span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+@media (max-width: 980px) {
+  .stock-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .stock-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .stock-ticker-top {
+    flex-direction: column;
+  }
+
+  .stock-price {
+    font-size: 32px;
+  }
+
+  .stock-stats {
+    grid-template-columns: 1fr;
+  }
+}

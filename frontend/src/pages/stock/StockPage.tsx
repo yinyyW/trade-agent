@@ -1,176 +1,199 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  createChart,
-  IChartApi,
-  ISeriesApi,
-  CandlestickSeries,
-  HistogramSeries,
-  LineSeries,
-  CandlestickData,
-  HistogramData,
-  LineData,
-} from "lightweight-charts";
-import { MarketKlineRequest, MarketKlineResponse } from "@/types/stock";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Empty } from "antd";
 import { fetchMarketKline } from "@/api/stock";
+import { getErrorMessage } from "@/api/http";
+import { EmptyState, ErrorState, LoadingState } from "@/components/common/Status";
+import KLineChart from "@/components/market/KLineChart";
+import StockHeader from "@/components/market/StockHeader";
+import StockSummaryAside from "@/components/market/StockSummaryAside";
+import type { MarketKlineResponse } from "@/types/stock";
+import {
+  buildStockQuoteSummary,
+  normalizeStockSymbol,
+} from "@/utils/stock";
+import "@/styles/stock.css";
 
-function KLineChart({ data }: { data: MarketKlineResponse }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const chartRef = useRef<IChartApi | null>(null);
-  const candleSeriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
-  const volumeSeriesRef = useRef<ISeriesApi<"Histogram"> | null>(null);
-  // 保存均线系列引用，方便销毁重绘
-  const overlayLinesRef = useRef<ISeriesApi<"Line">[]>([]);
+type StockTabKey = "trend" | "finance" | "score";
 
-  useEffect(() => {
-    console.log("k线图组件数据: ", data);
+const STOCK_TABS: Array<{ key: StockTabKey; label: string }> = [
+  { key: "trend", label: "走势分析" },
+  { key: "finance", label: "财报解读" },
+  { key: "score", label: "综合评价" },
+];
 
-    const container = containerRef.current;
-    if (!container) return;
-
-    const chart = createChart(container, {
-      width: container.clientWidth,
-      height: 620,
-      layout: { background: { color: "#ffffff" }, textColor: "#333333" },
-      grid: {
-        vertLines: { color: "#eeeeee" },
-        horzLines: { color: "#eeeeee" },
-      },
-    });
-    chartRef.current = chart;
-
-    // K线蜡烛图
-    const candleSeries = chart.addSeries(CandlestickSeries, {
-      upColor: "#ef5350",
-      downColor: "#26a69a",
-      borderUpColor: "#ef5350",
-      borderDownColor: "#26a69a",
-      wickUpColor: "#ef5350",
-      wickDownColor: "#26a69a",
-    });
-    candleSeriesRef.current = candleSeries;
-
-    // 成交量副图：移除 priceScale 配置！只保留基础series选项
-    const volumeSeries = chart.addSeries(HistogramSeries, {
-      priceFormat: { type: "volume" },
-      priceScaleId: "",
-    });
-    volumeSeriesRef.current = volumeSeries;
-
-    // ========= 重点修复：单独给volume的priceScale设置scaleMargins =========
-    volumeSeries.priceScale().applyOptions({
-      scaleMargins: {
-        top: 0.82,
-        bottom: 0,
-      },
-    });
-
-    // ---- 数据转换（和之前一致） ----
-    const candleData: CandlestickData[] = [];
-    const volumeData: HistogramData[] = [];
-    const timeList = data.candles.map((c) => c.time);
-
-    data.candles.forEach((item) => {
-      const open = Number(item.open);
-      const close = Number(item.close);
-      candleData.push({
-        time: item.time,
-        open,
-        high: Number(item.high),
-        low: Number(item.low),
-        close,
-      });
-      const volColor = close >= open ? "#ef5350" : "#26a69a";
-      volumeData.push({
-        time: item.time,
-        value: Number(item.volume),
-        color: volColor,
-      });
-    });
-
-    candleSeries.setData(candleData);
-    volumeSeries.setData(volumeData);
-
-    // ---- MA 叠加线（v5：addSeries + LineSeries） ----
-    const maIndicator = data.indicators.find((ind) => ind.name === "MA");
-    if (maIndicator) {
-      maIndicator.series.forEach((ser) => {
-        const lineData: LineData[] = [];
-        for (let i = 0; i < ser.values.length; i++) {
-          const val = ser.values[i];
-          if (val !== null) {
-            lineData.push({ time: timeList[i], value: Number(val) });
-          }
-        }
-        const colorMap: Record<string, string> = {
-          MA5: "#ff9800",
-          MA60: "#9c27b0",
-          MA250: "#0288d1",
-        };
-        const candleScaleId = candleSeries.options().priceScaleId; // "right"
-        const lineSeries = chart.addSeries(LineSeries, {
-          priceScaleId: candleScaleId, // 和蜡烛图同一坐标轴
-          lineWidth: 2,
-          color: colorMap[ser.name] || "#666666",
-          title: ser.name,
-        });
-        lineSeries.setData(lineData);
-        overlayLinesRef.current.push(lineSeries);
-      });
-    }
-
-    chart.timeScale().fitContent();
-
-    const resizeFn = () => chart.applyOptions({ width: container.clientWidth });
-    window.addEventListener("resize", resizeFn);
-
-    return () => {
-      window.removeEventListener("resize", resizeFn);
-      overlayLinesRef.current = [];
-      chart.remove();
-    };
-  }, [data]);
-
-  return <div ref={containerRef} style={{ width: "100%", height: "620px" }} />;
+function formatDateForApi(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
+/**
+ * 个股分析详情页。
+ *
+ * 股票代码通过 /stock/:symbol 路由参数进入，页面头部行情与 K 线图
+ * 复用 /api/v1/market/kline 数据；财报与综合评价依赖的 AI 接口暂未
+ * 接入，因此只保留对应 Tab 的空状态。
+ */
 export default function StockPage() {
-  const [klineRes, setKlineRes] = useState<MarketKlineResponse | null>(null);
+  const { symbol: routeSymbol } = useParams<{ symbol: string }>();
+  const navigate = useNavigate();
+  const [kline, setKline] = useState<MarketKlineResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<StockTabKey>("trend");
+  const [watched, setWatched] = useState(false);
+
+  const symbol = normalizeStockSymbol(routeSymbol);
+
+  const loadKline = useCallback(async () => {
+    const now = new Date();
+    const start = new Date(
+      now.getFullYear() - 1,
+      now.getMonth(),
+      now.getDate(),
+    );
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetchMarketKline({
+        symbol,
+        period: "1d",
+        adjust: "qfq",
+        start: formatDateForApi(start),
+        end: formatDateForApi(now),
+        indicators: [
+          {
+            name: "MA",
+            params: { periods: [5, 10, 20] },
+          },
+        ],
+      });
+      setKline(response);
+    } catch (requestError) {
+      setError(getErrorMessage(requestError));
+    } finally {
+      setLoading(false);
+    }
+  }, [symbol]);
 
   useEffect(() => {
-    const param: MarketKlineRequest = {
-      symbol: "sh600519",
-      period: "1d",
-      adjust: "qfq",
-      start: "2026-01-01",
-      end: "2026-09-10",
-      indicators: [
-        {
-          name: "MA",
-          params: {
-            periods: [5, 60, 250],
-          },
-        },
+    void loadKline();
+  }, [loadKline]);
 
-        {
-          name: "EMA",
-          params: {
-            periods: [5, 60, 250],
-          },
-        },
-      ],
-    };
-    console.log("获取个股数据");
-    fetchMarketKline(param)
-      .then((res) => {
-        console.log("获取个股数据，", res);
-        if (res) {
-          setKlineRes(res);
-        }
-      })
-      .catch((e) => {
-        console.log("获取k线数据失败");
-      });
+  const quote = useMemo(
+    () => (kline ? buildStockQuoteSummary(kline) : null),
+    [kline],
+  );
+
+  const handleAskAI = useCallback(() => {
+    navigate("/qa");
+  }, [navigate]);
+
+  const handleToggleWatch = useCallback(() => {
+    // 预留：后续接入自选股接口后再做持久化。
+    setWatched((value) => !value);
   }, []);
 
-  return <div>{klineRes && <KLineChart data={klineRes} />}</div>;
+  if (loading && !kline) {
+    return (
+      <div className="stock-page">
+        <LoadingState text="行情数据加载中..." />
+      </div>
+    );
+  }
+
+  if (error && !kline) {
+    return (
+      <div className="stock-page">
+        <ErrorState message={error} onRetry={loadKline} />
+      </div>
+    );
+  }
+
+  if (kline && kline.candles.length === 0) {
+    return (
+      <div className="stock-page">
+        <EmptyState text="暂无该股票的行情数据" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="stock-page">
+      {error && (
+        <div className="stale-banner" role="alert">
+          刷新失败：{error}，当前展示上次加载的数据。
+        </div>
+      )}
+
+      {quote && (
+        <StockHeader
+          quote={quote}
+          watched={watched}
+          onToggleWatch={handleToggleWatch}
+          onAskAI={handleAskAI}
+        />
+      )}
+
+      <div className="stock-layout">
+        <section className="panel stock-main">
+          <div className="stock-tabs" role="tablist" aria-label="个股分析标签页">
+            {STOCK_TABS.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab.key}
+                className={`stock-tab ${activeTab === tab.key ? "active" : ""}`}
+                onClick={() => setActiveTab(tab.key)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="stock-tab-content">
+            {activeTab === "trend" && (
+              <>
+                <div className="stock-chart-box">
+                  {kline && <KLineChart data={kline} height={395} />}
+                </div>
+
+                <div className="ai-box">
+                  <div className="ai-head">
+                    ✦ AI 技术面解读
+                    <span className="ai-sub">基于行情工具 + 技术指标知识库</span>
+                  </div>
+                  <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description="AI 技术面解读暂未接入"
+                  />
+                </div>
+              </>
+            )}
+
+            {activeTab === "finance" && (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description="财报数据暂未接入"
+              />
+            )}
+
+            {activeTab === "score" && (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description="综合评价数据暂未接入"
+              />
+            )}
+          </div>
+        </section>
+
+        {quote && <StockSummaryAside quote={quote} onAskAI={handleAskAI} />}
+      </div>
+    </div>
+  );
 }
