@@ -51,10 +51,9 @@ export function buildStockQuoteSummary(
   const latest = candles[candles.length - 1];
   const previous = candles.length > 1 ? candles[candles.length - 2] : null;
   const previousClose = previous ? previous.close : latest.open;
-  const change = latest.close - previousClose;
-  const changePercent =
-    previousClose !== 0 ? (change / previousClose) * 100 : 0;
-
+  const change = latest.change_amount ?? latest.close - previousClose;
+  const changePercent = latest.change_pct ? Number(latest.change_pct) : 0;
+  console.log(`turnover: ${latest.turnover}`);
   return {
     symbol: kline.symbol,
     code: formatStockCode(kline.symbol),
@@ -65,14 +64,12 @@ export function buildStockQuoteSummary(
     open: latest.open,
     high: latest.high,
     low: latest.low,
-    turnover: null,
+    turnover: latest.turnover ? Number(latest.turnover) * 100 : null,
   };
 }
 
 /** A 股红涨绿跌趋势样式。 */
-export function getStockTrendClass(
-  value: number,
-): "up" | "down" | "flat" {
+export function getStockTrendClass(value: number): "up" | "down" | "flat" {
   if (value > 0) {
     return "up";
   }

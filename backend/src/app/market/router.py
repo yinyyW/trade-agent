@@ -40,8 +40,11 @@ async def get_kline(
             status_code=400,
             detail=str(e),
         )
+    stock_name = service.get_stock_name(request.symbol)
     market_kline_data = MarketKlineData(
         symbol=request.symbol,
+
+        name=stock_name,
 
         period=request.period,
 
@@ -60,6 +63,10 @@ async def get_kline(
                 close=candle.close,
                 volume=candle.volume,
                 amount=candle.amount,
+                turnover=candle.turnover,
+                amplitude=candle.amplitude,
+                change_pct=candle.change_pct,
+                change_amount=candle.change_amount
             )
             for candle in candles
         ],

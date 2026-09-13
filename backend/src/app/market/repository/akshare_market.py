@@ -7,8 +7,6 @@ from app.market.domain.candle import Candle
 from app.market.domain.timeframe import AdjustType, KlinePeriod
 from app.market.repository.base import MarketRepository
 import pandas as pd
-import re
-
 
 class AkshareMarketRepository(MarketRepository):
 

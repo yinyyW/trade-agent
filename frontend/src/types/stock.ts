@@ -10,6 +10,9 @@ export interface Candle {
   close: number;
   volume: number;
   amount: number;
+  turnover?: number;
+  change_pct?: number;
+  change_amount?: number;
 }
 
 export interface IndicatorSeries {

@@ -74,6 +74,11 @@ class CandleResponse(BaseModel):
     volume: Decimal
     amount: Decimal
 
+    turnover: Decimal
+    amplitude: Decimal
+    change_pct: Decimal
+    change_amount: Decimal
+
 class MarketKlineMeta(BaseModel):
     timezone: str = "Asia/Shanghai"
 

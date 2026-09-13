@@ -1,10 +1,24 @@
 from __future__ import annotations
+from functools import lru_cache
+import akshare as ak
 
 from .domain.candle import Candle
 from .indicators import INDICATOR_REGISTRY
 from .indicators.base import IndicatorResult
 from .domain.timeframe import AdjustType, KlinePeriod
 from .repository.akshare_market import MarketRepository
+
+
+@lru_cache(maxsize=1)
+def get_stock_map() -> dict[str, str]:
+    df = ak.stock_info_a_code_name()
+
+    return dict(
+        zip(
+            df["code"].astype(str),
+            df["name"].astype(str),
+        )
+    )
 
 class IndicatorService:
 
@@ -50,6 +64,11 @@ class MarketService:
         self.repository = repository
         self.indicator_service = indicator_service
 
+    def get_stock_name(self, symbol: str) -> str | None:
+        stock_map = get_stock_map()
+        code = self._convert_symbot_to_code(symbol=symbol)
+        return stock_map.get(code)
+
     async def get_kline(
         self,
         symbol: str,
@@ -78,3 +97,15 @@ class MarketService:
         )
 
         return candles, indicator_results
+
+    def _convert_symbot_to_code(self, symbol):
+        symbol = symbol.upper().strip()
+
+        if "." in symbol:
+            parts = symbol.split(".")
+            return parts[-1]
+
+        if len(symbol) > 6:
+            return symbol[-6:]
+
+        return symbol
