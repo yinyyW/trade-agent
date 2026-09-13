@@ -1,8 +1,11 @@
 from __future__ import annotations
+import logging
 
 from langchain_mcp_adapters.client import MultiServerMCPClient
 
 from .config import mcp_settings
+
+logger = logging.getLogger(__name__)
 
 class THSMCPClient:
 
@@ -69,4 +72,8 @@ class THSMCPClient:
         )
 
     async def get_tools(self):
-        return await self.client.get_tools()
+        try:
+            return await self.client.get_tools()
+        except Exception as exp:
+            logger.exception(f"Failed to load MCP tools {exp}")
+            raise 

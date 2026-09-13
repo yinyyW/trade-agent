@@ -1,5 +1,6 @@
 # app/runtime/agent_runtime.py
 
+import logging
 from typing import Dict
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
@@ -14,6 +15,8 @@ from app.mcp.manager import MCPManager
 from app.mcp.registry import MCPToolRegistry
 from app.rag.service import RagService
 from app.llm.deepseek import create_deepseek
+
+logger = logging.getLogger(__name__)
 
 
 class AgentRuntime:
@@ -33,13 +36,14 @@ class AgentRuntime:
         """
 
         # 1. MCP
-        print("初始化 MCP...")
+        logger.info("初始化 MCP 客户端...")
 
         if not self.mcp_client:
             self.mcp_client = THSMCPClient()
 
         registry = MCPToolRegistry()
 
+        logger.info("获取 MCP 工具...")
         tools = await self.mcp_client.get_tools()
 
         if not self.mcp_manager:
